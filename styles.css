@@ -160,6 +160,45 @@ body {
   font-weight: 500;
 }
 
+/* NEW: 3-dot menu for course sections */
+.course-row .dropdown {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1; /* Ensure it's above other elements */
+}
+
+.course-row .dropdown-toggle {
+  background: none;
+  border: none;
+  color: #6c757d; /* Bootstrap secondary color */
+  font-size: 1.2rem;
+  padding: 0 5px;
+  cursor: pointer;
+}
+
+.course-row .dropdown-toggle::after {
+  display: none; /* Hide default caret */
+}
+
+.course-row .dropdown-menu {
+  min-width: auto;
+  padding: 0;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.course-row .dropdown-item {
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  color: var(--danger-color);
+}
+
+.course-row .dropdown-item:hover {
+  background-color: var(--danger-color);
+  color: white;
+}
+
 /* Selected Courses & Analysis Panel Fixed Position */
 .sticky-sidebar {
   position: sticky;
@@ -329,6 +368,12 @@ body {
   /* For mobile devices */
   .course-row {
     flex-wrap: wrap;
+  }
+
+  .course-row .dropdown {
+    position: static; /* Remove absolute positioning */
+    margin-left: auto; /* Push to the right */
+    margin-top: 5px; /* Add some space */
   }
 
   .course-info {

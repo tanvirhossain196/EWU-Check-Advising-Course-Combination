@@ -284,10 +284,13 @@ function createCourseSectionRow(course, index) {
     div.classList.add("selected-row");
   }
 
-  // Handle click on the row to toggle selection
+  // Handle click on the row to toggle selection (excluding the dropdown)
   div.onclick = (event) => {
-    // Prevent toggling if the click originated from the checkbox itself
-    if (event.target.type !== "checkbox") {
+    // Prevent toggling if the click originated from the checkbox or dropdown
+    if (
+      event.target.type !== "checkbox" &&
+      !event.target.closest(".dropdown")
+    ) {
       toggleCourse(event, index);
     }
   };
@@ -316,9 +319,50 @@ function createCourseSectionRow(course, index) {
     course.hasLab ? "(with Lab)" : ""
   }</div>
         </div>
+        <div class="dropdown">
+            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton${index}" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton${index}">
+                <li><a class="dropdown-item" href="#" onclick="deleteCourseSection(event, '${
+                  course.code
+                }', ${
+    course.section
+  })"><i class="fas fa-trash-alt me-2"></i>Delete Section</a></li>
+            </ul>
+        </div>
     `;
 
   return div;
+}
+
+// Function to delete a course section
+function deleteCourseSection(event, courseCode, section) {
+  event.stopPropagation(); // Prevent the row's onclick from firing
+  if (
+    confirm(
+      `Are you sure you want to delete ${courseCode} Section ${section}? This action cannot be undone.`
+    )
+  ) {
+    // Remove from coursesData
+    coursesData = coursesData.filter(
+      (course) => !(course.code === courseCode && course.section === section)
+    );
+
+    // Also remove from selectedCourses if it was selected
+    selectedCourses = selectedCourses.filter(
+      (course) => !(course.code === courseCode && course.section === section)
+    );
+
+    renderCourses(); // Re-render the course list
+    updateSelectedCoursesDisplay(); // Update selected courses display
+    populateCourseCodeNav(); // Update course code navigation
+    saveToLocalStorage(); // Save changes
+    showNotification(
+      `${courseCode} Section ${section} deleted successfully.`,
+      "success"
+    );
+  }
 }
 
 // Toggle course selection (MODIFIED TO PREVENT MULTIPLE SECTIONS OF SAME COURSE CODE AND HANDLE PRIMARY KEY)
@@ -883,14 +927,11 @@ function addNewCourse() {
     const isLab = entry.querySelector('[name="isLab"]').checked;
     let days, room, startTime, endTime;
 
-    // For lab components, labDay and labRoom are the primary inputs for days and room
-    // For lecture components, scheduleDays and scheduleRoom are the primary inputs
     if (isLab) {
       days = entry.querySelector('[name="labDay"]').value.toUpperCase();
       room = entry.querySelector('[name="labRoom"]').value;
-      // Time inputs are common for both lecture and lab
-      startTime = entry.querySelector('[name="scheduleStartTime"]').value;
-      endTime = entry.querySelector('[name="scheduleEndTime"]').value;
+      startTime = entry.querySelector('[name="labStartTime"]').value; // Separate lab time
+      endTime = entry.querySelector('[name="labEndTime"]').value; // Separate lab time
       hasLabComponent = true;
     } else {
       days = entry.querySelector('[name="scheduleDays"]').value.toUpperCase();
@@ -982,8 +1023,6 @@ function addScheduleEntry() {
                     <input type="text" class="form-control" name="scheduleRoom" placeholder="e.g., AB2-502" required>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Start Time</label>
@@ -997,7 +1036,7 @@ function addScheduleEntry() {
                 </div>
             </div>
         </div>
-        <div class="form-check">
+        <div class="form-check mt-3">
             <input class="form-check-input" type="checkbox" name="isLab" onchange="toggleLabFields(this)">
             <label class="form-check-label">
                 This is a Lab component
@@ -1015,6 +1054,18 @@ function addScheduleEntry() {
                     <label class="form-label">Lab Room</label>
                     <input type="text" class="form-control" name="labRoom"
                                                 placeholder="e.g., LAB-101">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Lab Start Time</label>
+                    <input type="time" class="form-control" name="labStartTime">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Lab End Time</label>
+                    <input type="time" class="form-control" name="labEndTime">
                 </div>
             </div>
         </div>
@@ -1048,14 +1099,28 @@ function toggleLabFields(checkbox) {
   const heading = scheduleEntry.querySelector("h6");
   const lectureFields = scheduleEntry.querySelector(".lecture-fields");
   const labFields = scheduleEntry.querySelector(".lab-fields");
+
+  // Lecture fields
   const scheduleDaysInput = scheduleEntry.querySelector(
     '[name="scheduleDays"]'
   );
   const scheduleRoomInput = scheduleEntry.querySelector(
     '[name="scheduleRoom"]'
   );
+  const lectureStartTimeInput = scheduleEntry.querySelector(
+    '[name="scheduleStartTime"]'
+  );
+  const lectureEndTimeInput = scheduleEntry.querySelector(
+    '[name="scheduleEndTime"]'
+  );
+
+  // Lab fields
   const labDayInput = scheduleEntry.querySelector('[name="labDay"]');
   const labRoomInput = scheduleEntry.querySelector('[name="labRoom"]');
+  const labStartTimeInput = scheduleEntry.querySelector(
+    '[name="labStartTime"]'
+  );
+  const labEndTimeInput = scheduleEntry.querySelector('[name="labEndTime"]');
 
   const entryIndex =
     Array.from(scheduleEntry.parentNode.children).indexOf(scheduleEntry) + 1;
@@ -1068,8 +1133,15 @@ function toggleLabFields(checkbox) {
     // Make lab fields required and lecture fields not required
     if (scheduleDaysInput) scheduleDaysInput.removeAttribute("required");
     if (scheduleRoomInput) scheduleRoomInput.removeAttribute("required");
+    if (lectureStartTimeInput)
+      lectureStartTimeInput.removeAttribute("required");
+    if (lectureEndTimeInput) lectureEndTimeInput.removeAttribute("required");
+
     if (labDayInput) labDayInput.setAttribute("required", "required");
     if (labRoomInput) labRoomInput.setAttribute("required", "required");
+    if (labStartTimeInput)
+      labStartTimeInput.setAttribute("required", "required");
+    if (labEndTimeInput) labEndTimeInput.setAttribute("required", "required");
   } else {
     heading.textContent = `Schedule ${entryIndex} (Lecture)`;
     if (lectureFields) lectureFields.style.display = "flex";
@@ -1080,8 +1152,15 @@ function toggleLabFields(checkbox) {
       scheduleDaysInput.setAttribute("required", "required");
     if (scheduleRoomInput)
       scheduleRoomInput.setAttribute("required", "required");
+    if (lectureStartTimeInput)
+      lectureStartTimeInput.setAttribute("required", "required");
+    if (lectureEndTimeInput)
+      lectureEndTimeInput.setAttribute("required", "required");
+
     if (labDayInput) labDayInput.removeAttribute("required");
     if (labRoomInput) labRoomInput.removeAttribute("required");
+    if (labStartTimeInput) labStartTimeInput.removeAttribute("required");
+    if (labEndTimeInput) labEndTimeInput.removeAttribute("required");
   }
 }
 
@@ -1778,23 +1857,29 @@ function validateCourseData() {
     }
 
     course.schedules?.forEach((schedule, schedIndex) => {
+      // Determine which time fields to validate based on isLab
+      let startTimeField = schedule.isLab ? "labStartTime" : "startTime";
+      let endTimeField = schedule.isLab ? "labEndTime" : "endTime";
+      let daysField = schedule.isLab ? "labDay" : "days";
+      let roomField = schedule.isLab ? "labRoom" : "room";
+
       if (
-        !schedule.days ||
-        !schedule.startTime ||
-        !schedule.endTime ||
-        !schedule.room
+        !schedule[daysField] ||
+        !schedule[startTimeField] ||
+        !schedule[endTimeField] ||
+        !schedule[roomField]
       ) {
         errors.push(
           `Course ${course.code} Section ${course.section}, Schedule ${
             schedIndex + 1
-          }: Missing schedule details (days, start/end time, or room).` +
-            `Start Time: ${schedule.startTime}, End Time: ${schedule.endTime}`
+          }: Missing schedule details (${daysField}, ${startTimeField}/${endTimeField}, or ${roomField}).` +
+            `Start Time: ${schedule[startTimeField]}, End Time: ${schedule[endTimeField]}`
         );
       }
       // Basic time format validation (HH:MM)
       if (
-        !/^\d{2}:\d{2}$/.test(schedule.startTime) ||
-        !/^\d{2}:\d{2}$/.test(schedule.endTime)
+        !/^\d{2}:\d{2}$/.test(schedule[startTimeField]) ||
+        !/^\d{2}:\d{2}$/.test(schedule[endTimeField])
       ) {
         errors.push(
           `Course ${course.code} Section ${course.section}, Schedule ${
