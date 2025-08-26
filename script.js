@@ -169,9 +169,9 @@ let coursesData = [
     faculty: "NTN",
     schedules: [
       {
-        days: "SR",
-        startTime: "04:50",
-        endTime: "06:20",
+        days: "SR", // S for Sunday, R for Thursday
+        startTime: "16:50", // 4:50 PM in 24-hour format
+        endTime: "18:20", // 6:20 PM in 24-hour format
         room: "432",
         isLab: false,
       },
@@ -334,6 +334,9 @@ function toggleCourse(event, index) {
       selected.code === course.code && selected.section === course.section
   );
 
+  // Capture current scroll position
+  const scrollY = window.scrollY;
+
   if (isCurrentlySelected) {
     // If already selected, remove it
     selectedCourses = selectedCourses.filter(
@@ -403,6 +406,7 @@ function toggleCourse(event, index) {
     renderCourses(); // Re-render to update all checkboxes and highlights
     updateSelectedCoursesDisplay();
     saveToLocalStorage();
+    window.scrollTo(0, scrollY); // Restore scroll position
   }, 100); // Small delay for smoother visual feedback
 }
 
@@ -816,13 +820,13 @@ function getExamDay(course) {
   // Prioritize the first lecture schedule for exam day determination
   const primaryScheduleDays = lectureSchedules[0].days;
 
-  // Specific rule: If class is S and R, exam is Thursday (R)
-  if (primaryScheduleDays.includes("S") && primaryScheduleDays.includes("R")) {
-    return "Thursday";
-  }
   // Specific rule: If class is S and T, exam is Sunday (S)
   if (primaryScheduleDays.includes("S") && primaryScheduleDays.includes("T")) {
     return "Sunday";
+  }
+  // Specific rule: If class is S and R, exam is Thursday (R)
+  if (primaryScheduleDays.includes("S") && primaryScheduleDays.includes("R")) {
+    return "Thursday";
   }
   // Specific rule: If class is M and W, exam is Monday (M)
   if (primaryScheduleDays.includes("M") && primaryScheduleDays.includes("W")) {
@@ -852,7 +856,7 @@ function formatTime(timeStr) {
   const hour24 = parseInt(hours);
   const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
   const ampm = hour24 >= 12 ? "PM" : "AM";
-  return `${hour12}:${minutes} ${ampm}`;
+  return `${hour12}:${minutes.toString().padStart(2, "0")} ${ampm}`;
 }
 
 // Add new course functionality (MODIFIED)
@@ -879,9 +883,12 @@ function addNewCourse() {
     const isLab = entry.querySelector('[name="isLab"]').checked;
     let days, room, startTime, endTime;
 
+    // For lab components, labDay and labRoom are the primary inputs for days and room
+    // For lecture components, scheduleDays and scheduleRoom are the primary inputs
     if (isLab) {
       days = entry.querySelector('[name="labDay"]').value.toUpperCase();
       room = entry.querySelector('[name="labRoom"]').value;
+      // Time inputs are common for both lecture and lab
       startTime = entry.querySelector('[name="scheduleStartTime"]').value;
       endTime = entry.querySelector('[name="scheduleEndTime"]').value;
       hasLabComponent = true;
@@ -1006,7 +1013,8 @@ function addScheduleEntry() {
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Lab Room</label>
-                    <input type="text" class="form-control" name="labRoom" placeholder="e.g., LAB-101">
+                    <input type="text" class="form-control" name="labRoom"
+                                                placeholder="e.g., LAB-101">
                 </div>
             </div>
         </div>
