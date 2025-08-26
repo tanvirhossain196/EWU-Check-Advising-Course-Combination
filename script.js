@@ -7,7 +7,13 @@ let coursesData = [
     section: 5,
     faculty: "NISHAT",
     schedules: [
-      { days: "TR", startTime: "08:30", endTime: "10:00", room: "AB2-502" },
+      {
+        days: "TR",
+        startTime: "08:30",
+        endTime: "10:00",
+        room: "AB2-502",
+        isLab: false,
+      },
       {
         days: "T",
         startTime: "10:10",
@@ -24,7 +30,13 @@ let coursesData = [
     section: 6,
     faculty: "NISHAT",
     schedules: [
-      { days: "R", startTime: "10:10", endTime: "11:40", room: "AB2-501" },
+      {
+        days: "R",
+        startTime: "10:10",
+        endTime: "11:40",
+        room: "AB2-501",
+        isLab: false,
+      },
       {
         days: "M",
         startTime: "08:00",
@@ -32,7 +44,13 @@ let coursesData = [
         room: "634 (Digital System Lab)",
         isLab: true,
       },
-      { days: "S", startTime: "10:10", endTime: "11:40", room: "AB2-601" },
+      {
+        days: "SR",
+        startTime: "10:10",
+        endTime: "11:40",
+        room: "AB2-601",
+        isLab: false,
+      }, // Added for S/R exam logic test
     ],
     credits: 4,
     hasLab: true,
@@ -42,7 +60,13 @@ let coursesData = [
     section: 1,
     faculty: "RAKIB",
     schedules: [
-      { days: "TR", startTime: "08:30", endTime: "10:00", room: "FUB-403" },
+      {
+        days: "TR",
+        startTime: "08:30",
+        endTime: "10:00",
+        room: "FUB-403",
+        isLab: false,
+      },
     ],
     credits: 3,
     hasLab: false,
@@ -52,8 +76,20 @@ let coursesData = [
     section: 2,
     faculty: "RAKIB",
     schedules: [
-      { days: "T", startTime: "10:10", endTime: "11:40", room: "FUB-301" },
-      { days: "R", startTime: "10:10", endTime: "11:40", room: "FUB-302" },
+      {
+        days: "T",
+        startTime: "10:10",
+        endTime: "11:40",
+        room: "FUB-301",
+        isLab: false,
+      },
+      {
+        days: "R",
+        startTime: "10:10",
+        endTime: "11:40",
+        room: "FUB-302",
+        isLab: false,
+      },
     ],
     credits: 3,
     hasLab: false,
@@ -63,7 +99,13 @@ let coursesData = [
     section: 3,
     faculty: "MAHCY",
     schedules: [
-      { days: "ST", startTime: "16:50", endTime: "18:20", room: "AB3-1001" },
+      {
+        days: "ST",
+        startTime: "16:50",
+        endTime: "18:20",
+        room: "AB3-1001",
+        isLab: false,
+      },
     ],
     credits: 3,
     hasLab: false,
@@ -73,8 +115,20 @@ let coursesData = [
     section: 4,
     faculty: "TBA",
     schedules: [
-      { days: "S", startTime: "16:50", endTime: "18:20", room: "AB3-802" },
-      { days: "R", startTime: "16:50", endTime: "18:20", room: "FUB-303" },
+      {
+        days: "S",
+        startTime: "16:50",
+        endTime: "18:20",
+        room: "AB3-802",
+        isLab: false,
+      },
+      {
+        days: "R",
+        startTime: "16:50",
+        endTime: "18:20",
+        room: "FUB-303",
+        isLab: false,
+      },
     ],
     credits: 3,
     hasLab: false,
@@ -91,8 +145,20 @@ let coursesData = [
         room: "437 (Cyber Security Lab)",
         isLab: true,
       },
-      { days: "S", startTime: "10:10", endTime: "11:40", room: "AB3-402" },
-      { days: "R", startTime: "10:10", endTime: "11:40", room: "AB3-901" },
+      {
+        days: "S",
+        startTime: "10:10",
+        endTime: "11:40",
+        room: "AB3-402",
+        isLab: false,
+      },
+      {
+        days: "R",
+        startTime: "10:10",
+        endTime: "11:40",
+        room: "AB3-901",
+        isLab: false,
+      },
     ],
     credits: 4,
     hasLab: true,
@@ -102,7 +168,13 @@ let coursesData = [
     section: 1,
     faculty: "NTN",
     schedules: [
-      { days: "MW", startTime: "08:30", endTime: "10:00", room: "AB1-402" },
+      {
+        days: "MW",
+        startTime: "08:30",
+        endTime: "10:00",
+        room: "AB1-402",
+        isLab: false,
+      },
     ],
     credits: 3,
     hasLab: false,
@@ -390,7 +462,9 @@ function updateSelectedCoursesDisplay() {
                             (s) =>
                               `${expandDays(s.days)} ${formatTime(
                                 s.startTime
-                              )} - ${formatTime(s.endTime)} (${s.room})`
+                              )} - ${formatTime(s.endTime)} (${s.room}) ${
+                                s.isLab ? "[LAB]" : ""
+                              }`
                           )
                           .join("<br>")}
                     </div>
@@ -634,7 +708,7 @@ function getExamDayDistribution() {
   const examDays = {};
 
   selectedCourses.forEach((course) => {
-    const examDay = getExamDay(course.schedules[0].days);
+    const examDay = getExamDay(course); // Pass the whole course object
     if (!examDays[examDay]) {
       examDays[examDay] = [];
     }
@@ -726,22 +800,42 @@ function generateOverallAssessment(conflictCount, totalCredits, examDays) {
   return { rating, class: className, message };
 }
 
-// Get exam day based on class schedule
-function getExamDay(scheduleDays) {
-  if (scheduleDays.includes("S") && scheduleDays.includes("T"))
-    return "Saturday";
-  if (scheduleDays.includes("M") && scheduleDays.includes("W")) return "Monday";
-  if (scheduleDays.includes("T") && scheduleDays.includes("R"))
-    return "Tuesday";
-  if (scheduleDays.includes("S") && scheduleDays.includes("R"))
+// Get exam day based on class schedule (MODIFIED)
+function getExamDay(course) {
+  // Find the primary lecture schedule (not lab)
+  const lectureSchedules = course.schedules.filter((s) => !s.isLab);
+
+  if (lectureSchedules.length === 0) {
+    // If only lab schedules exist, use the first one as a fallback
+    if (course.schedules.length > 0) {
+      return dayMapping[course.schedules[0].days.split("")[0]] || "TBD";
+    }
+    return "TBD"; // No schedules found
+  }
+
+  // Prioritize the first lecture schedule for exam day determination
+  const primaryScheduleDays = lectureSchedules[0].days;
+
+  // Specific rule: If class is S and R, exam is Thursday (R)
+  if (primaryScheduleDays.includes("S") && primaryScheduleDays.includes("R")) {
     return "Thursday";
-  if (scheduleDays.includes("S")) return "Saturday";
-  if (scheduleDays.includes("M")) return "Monday";
-  if (scheduleDays.includes("T")) return "Tuesday";
-  if (scheduleDays.includes("W")) return "Wednesday";
-  if (scheduleDays.includes("R")) return "Thursday";
-  if (scheduleDays.includes("F")) return "Friday"; // Added Friday
-  return "TBD";
+  }
+  // Specific rule: If class is S and T, exam is Sunday (S)
+  if (primaryScheduleDays.includes("S") && primaryScheduleDays.includes("T")) {
+    return "Sunday";
+  }
+  // Specific rule: If class is M and W, exam is Monday (M)
+  if (primaryScheduleDays.includes("M") && primaryScheduleDays.includes("W")) {
+    return "Monday";
+  }
+  // Specific rule: If class is T and R, exam is Tuesday (T)
+  if (primaryScheduleDays.includes("T") && primaryScheduleDays.includes("R")) {
+    return "Tuesday";
+  }
+
+  // Fallback to the first day of the primary schedule
+  const firstDayCode = primaryScheduleDays.split("")[0];
+  return dayMapping[firstDayCode] || "TBD";
 }
 
 // Expand day abbreviations
@@ -754,14 +848,14 @@ function expandDays(days) {
 
 // Format time from 24-hour to 12-hour format
 function formatTime(timeStr) {
-  const [hours, minutes] = timeStr.split(":");
+  const [hours, minutes] = timeStr.split(":").map(Number);
   const hour24 = parseInt(hours);
   const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
   const ampm = hour24 >= 12 ? "PM" : "AM";
   return `${hour12}:${minutes} ${ampm}`;
 }
 
-// Add new course functionality
+// Add new course functionality (MODIFIED)
 function addNewCourse() {
   const form = document.getElementById("addCourseForm");
   // Validate form
@@ -770,33 +864,51 @@ function addNewCourse() {
     return;
   }
 
-  // Get form values
+  // Get main course values
   const courseCode = document.getElementById("courseCode").value;
   const section = parseInt(document.getElementById("section").value);
   const faculty = document.getElementById("faculty").value;
-  const credits = parseInt(document.getElementById("credits").value); // Get credits
-  const days = document.getElementById("days").value;
-  const startTime = document.getElementById("startTime").value;
-  const endTime = document.getElementById("endTime").value;
-  const room = document.getElementById("room").value;
-  const hasLab = document.getElementById("hasLab").checked;
+  const credits = parseInt(document.getElementById("credits").value);
+
+  // Get all schedule entries
+  const scheduleEntries = document.querySelectorAll(".schedule-entry");
+  const schedules = [];
+  let hasLabComponent = false;
+
+  scheduleEntries.forEach((entry) => {
+    const isLab = entry.querySelector('[name="isLab"]').checked;
+    let days, room, startTime, endTime;
+
+    if (isLab) {
+      days = entry.querySelector('[name="labDay"]').value.toUpperCase();
+      room = entry.querySelector('[name="labRoom"]').value;
+      startTime = entry.querySelector('[name="scheduleStartTime"]').value;
+      endTime = entry.querySelector('[name="scheduleEndTime"]').value;
+      hasLabComponent = true;
+    } else {
+      days = entry.querySelector('[name="scheduleDays"]').value.toUpperCase();
+      room = entry.querySelector('[name="scheduleRoom"]').value;
+      startTime = entry.querySelector('[name="scheduleStartTime"]').value;
+      endTime = entry.querySelector('[name="scheduleEndTime"]').value;
+    }
+
+    schedules.push({
+      days: days,
+      startTime: startTime,
+      endTime: endTime,
+      room: room,
+      isLab: isLab,
+    });
+  });
 
   // Create new course object
   const newCourse = {
     code: courseCode.toUpperCase(),
     section: section,
     faculty: faculty.toUpperCase(),
-    schedules: [
-      {
-        days: days.toUpperCase(),
-        startTime: startTime, // Already 24-hour from input type="time"
-        endTime: endTime, // Already 24-hour from input type="time"
-        room: room,
-        isLab: hasLab,
-      },
-    ],
-    credits: credits, // Use the input credits
-    hasLab: hasLab,
+    schedules: schedules,
+    credits: credits,
+    hasLab: hasLabComponent, // Set based on whether any schedule is a lab
   };
 
   // Check if course already exists
@@ -822,6 +934,16 @@ function addNewCourse() {
 
   // Reset form and close modal
   form.reset();
+  // Remove all but the first schedule entry
+  const initialScheduleEntry = document.querySelector(
+    "#scheduleEntries .schedule-entry"
+  );
+  document.getElementById("scheduleEntries").innerHTML = ""; // Clear all
+  document.getElementById("scheduleEntries").appendChild(initialScheduleEntry); // Add back the first one
+  initialScheduleEntry.querySelector("h6").textContent = "Schedule 1 (Lecture)";
+  initialScheduleEntry.querySelector('[name="isLab"]').checked = false;
+  toggleLabFields(initialScheduleEntry.querySelector('[name="isLab"]')); // Reset lab fields visibility
+
   const modal = bootstrap.Modal.getInstance(
     document.getElementById("addCourseModal")
   );
@@ -829,6 +951,130 @@ function addNewCourse() {
 
   // Show success message
   showNotification("Course added successfully!", "success");
+}
+
+// Function to add another schedule entry to the modal
+function addScheduleEntry() {
+  const scheduleEntriesContainer = document.getElementById("scheduleEntries");
+  const currentEntryCount = scheduleEntriesContainer.children.length;
+
+  const newEntry = document.createElement("div");
+  newEntry.className = "schedule-entry border p-3 mb-3 rounded";
+  newEntry.innerHTML = `
+        <h6 class="mb-3">Schedule ${currentEntryCount + 1} (Lecture)</h6>
+        <div class="row lecture-fields">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Days (e.g., TR, MW, S, R)</label>
+                    <input type="text" class="form-control" name="scheduleDays" placeholder="e.g., TR" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Room</label>
+                    <input type="text" class="form-control" name="scheduleRoom" placeholder="e.g., AB2-502" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Start Time</label>
+                    <input type="time" class="form-control" name="scheduleStartTime" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">End Time</label>
+                    <input type="time" class="form-control" name="scheduleEndTime" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="isLab" onchange="toggleLabFields(this)">
+            <label class="form-check-label">
+                This is a Lab component
+            </label>
+        </div>
+        <div class="row lab-fields" style="display: none;">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Lab Day (e.g., M, T, W)</label>
+                    <input type="text" class="form-control" name="labDay" placeholder="e.g., M">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Lab Room</label>
+                    <input type="text" class="form-control" name="labRoom" placeholder="e.g., LAB-101">
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeScheduleEntry(this)">
+            <i class="fas fa-minus me-1"></i>Remove Schedule
+        </button>
+    `;
+  scheduleEntriesContainer.appendChild(newEntry);
+}
+
+// Function to remove a schedule entry from the modal
+function removeScheduleEntry(button) {
+  const entryToRemove = button.closest(".schedule-entry");
+  entryToRemove.remove();
+  // Re-number the remaining schedule entries
+  const scheduleEntries = document.querySelectorAll(
+    "#scheduleEntries .schedule-entry"
+  );
+  scheduleEntries.forEach((entry, index) => {
+    // Update the heading based on whether it's a lab or not
+    const isLabChecked = entry.querySelector('[name="isLab"]').checked;
+    entry.querySelector("h6").textContent = `Schedule ${index + 1}${
+      isLabChecked ? " (Lab)" : " (Lecture)"
+    }`;
+  });
+}
+
+// Function to toggle lab fields (MODIFIED to update heading text and show/hide fields)
+function toggleLabFields(checkbox) {
+  const scheduleEntry = checkbox.closest(".schedule-entry");
+  const heading = scheduleEntry.querySelector("h6");
+  const lectureFields = scheduleEntry.querySelector(".lecture-fields");
+  const labFields = scheduleEntry.querySelector(".lab-fields");
+  const scheduleDaysInput = scheduleEntry.querySelector(
+    '[name="scheduleDays"]'
+  );
+  const scheduleRoomInput = scheduleEntry.querySelector(
+    '[name="scheduleRoom"]'
+  );
+  const labDayInput = scheduleEntry.querySelector('[name="labDay"]');
+  const labRoomInput = scheduleEntry.querySelector('[name="labRoom"]');
+
+  const entryIndex =
+    Array.from(scheduleEntry.parentNode.children).indexOf(scheduleEntry) + 1;
+
+  if (checkbox.checked) {
+    heading.textContent = `Schedule ${entryIndex} (Lab)`;
+    if (lectureFields) lectureFields.style.display = "none";
+    if (labFields) labFields.style.display = "flex"; // Use flex for row layout
+
+    // Make lab fields required and lecture fields not required
+    if (scheduleDaysInput) scheduleDaysInput.removeAttribute("required");
+    if (scheduleRoomInput) scheduleRoomInput.removeAttribute("required");
+    if (labDayInput) labDayInput.setAttribute("required", "required");
+    if (labRoomInput) labRoomInput.setAttribute("required", "required");
+  } else {
+    heading.textContent = `Schedule ${entryIndex} (Lecture)`;
+    if (lectureFields) lectureFields.style.display = "flex";
+    if (labFields) labFields.style.display = "none";
+
+    // Make lecture fields required and lab fields not required
+    if (scheduleDaysInput)
+      scheduleDaysInput.setAttribute("required", "required");
+    if (scheduleRoomInput)
+      scheduleRoomInput.setAttribute("required", "required");
+    if (labDayInput) labDayInput.removeAttribute("required");
+    if (labRoomInput) labRoomInput.removeAttribute("required");
+  }
 }
 
 // Convert 12-hour time input to 24-hour format (Not strictly needed for input type="time")
@@ -882,7 +1128,7 @@ function showNotification(message, type = "info") {
   }, 5000);
 }
 
-// Export selected courses to PDF
+// Export selected courses to PDF (MODIFIED to use getExamDay(course) directly and add short form days)
 async function exportSelectedCourses() {
   if (selectedCourses.length === 0) {
     showNotification("No courses selected to export!", "warning");
@@ -953,9 +1199,18 @@ async function exportSelectedCourses() {
       yOffset += 10;
     }
 
+    // Get the days for the first lecture schedule (or first schedule if no lecture)
+    const primarySchedule =
+      course.schedules.find((s) => !s.isLab) || course.schedules[0];
+    const scheduleDaysShortForm = primarySchedule ? primarySchedule.days : "";
+
     doc.setFontSize(14);
     doc.setTextColor(44, 62, 80); // Primary color for course title
-    doc.text(`${course.code} - Section ${course.section}`, 10, yOffset);
+    doc.text(
+      `${course.code} - Section ${course.section} (${scheduleDaysShortForm})`,
+      10,
+      yOffset
+    );
     yOffset += 7;
 
     doc.setFontSize(10);
@@ -984,7 +1239,7 @@ async function exportSelectedCourses() {
       yOffset += 5;
     });
 
-    doc.text(`Exam Day: ${getExamDay(course.schedules[0].days)}`, 15, yOffset);
+    doc.text(`Exam Day: ${getExamDay(course)}`, 15, yOffset); // Pass course object
     yOffset += 10; // Space after each course
     doc.line(10, yOffset, 200, yOffset); // Separator line
     yOffset += 10;
@@ -1104,7 +1359,7 @@ function clearSavedData() {
   }
 }
 
-// Print functionality
+// Print functionality (MODIFIED to use getExamDay(course) directly and add short form days)
 function printSchedule() {
   if (selectedCourses.length === 0) {
     showNotification("No courses selected to print!", "warning");
@@ -1158,11 +1413,15 @@ function generatePrintableSchedule() {
     `;
 
   selectedCourses.forEach((course) => {
+    const primarySchedule =
+      course.schedules.find((s) => !s.isLab) || course.schedules[0];
+    const scheduleDaysShortForm = primarySchedule ? primarySchedule.days : "";
+
     html += `
             <div class="course">
                 <div class="course-title">${course.code} - Section ${
       course.section
-    }</div>
+    } (${scheduleDaysShortForm})</div>
                 <div class="course-details">
                     <div><strong>Faculty:</strong> ${course.faculty}</div>
                     <div><strong>Credits:</strong> ${course.credits} ${
@@ -1181,9 +1440,7 @@ function generatePrintableSchedule() {
                     `
                       )
                       .join("")}
-                    <div><strong>Exam Day:</strong> ${getExamDay(
-                      course.schedules[0].days
-                    )}</div>
+                    <div><strong>Exam Day:</strong> ${getExamDay(course)}</div>
                 </div>
             </div>
         `;
@@ -1597,7 +1854,7 @@ renderCourses = function () {
   }, 100); // Small delay to show loading spinner
 };
 
-// Show My Courses Button functionality
+// Show My Courses Button functionality (MODIFIED to use getExamDay(course) directly)
 function showMyCourses() {
   const myCoursesListDiv = document.getElementById("myCoursesList");
   const creditSuggestionDiv = document.getElementById("creditSuggestion");
@@ -1629,10 +1886,12 @@ function showMyCourses() {
                     (s) =>
                       `${expandDays(s.days)} ${formatTime(
                         s.startTime
-                      )} - ${formatTime(s.endTime)} (${s.room})`
+                      )} - ${formatTime(s.endTime)} (${s.room}) ${
+                        s.isLab ? "[LAB]" : ""
+                      }`
                   )
                   .join("<br>")}<br>
-                Exam Day: ${getExamDay(course.schedules[0].days)}
+                Exam Day: ${getExamDay(course)}
             </div>
         `;
   });

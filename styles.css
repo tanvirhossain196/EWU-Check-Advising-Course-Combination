@@ -6,6 +6,7 @@
   --success-color: #27ae60;
   --warning-color: #f39c12;
   --danger-color: #e74c3c;
+  --info-color: #17a2b8; /* Added for info alerts/elements */
   --light-bg: #f8f9fa;
   --border-radius: 8px;
   --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -220,7 +221,7 @@ body {
 
 .analysis-good {
   background-color: #d1ecf1; /* Light Cyan */
-  border-left-color: #17a2b8; /* Cyan */
+  border-left-color: var(--info-color); /* Cyan */
   color: #0c5460; /* Dark Cyan for text */
 }
 
@@ -531,4 +532,133 @@ body {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
+}
+
+/* NEW: Styles for dynamic schedule entries in Add Course Modal */
+.schedule-entry {
+  background-color: var(--light-bg);
+  border: 1px solid #e0e0e0;
+  border-radius: var(--border-radius);
+  padding: 15px;
+  margin-bottom: 15px;
+  position: relative; /* For positioning remove button */
+}
+
+.schedule-entry h6 {
+  color: var(--primary-color);
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 10px;
+}
+
+.schedule-entry .btn-outline-danger {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  border-radius: 5px;
+}
+
+/* Ensure lecture and lab fields use flex for row layout */
+.lecture-fields,
+.lab-fields {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.lecture-fields .col-md-6,
+.lab-fields .col-md-6 {
+  flex: 0 0 50%; /* Take 50% width */
+  max-width: 50%;
+}
+
+@media (max-width: 767.98px) {
+  .lecture-fields .col-md-6,
+  .lab-fields .col-md-6 {
+    flex: 0 0 100%; /* Full width on small screens */
+    max-width: 100%;
+  }
+}
+
+/* Weekly Schedule Table Styling */
+#weeklyScheduleGrid .table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  border-collapse: collapse;
+}
+
+#weeklyScheduleGrid .table th,
+#weeklyScheduleGrid .table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+#weeklyScheduleGrid .table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+#weeklyScheduleGrid .table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+#weeklyScheduleGrid .table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+#weeklyScheduleGrid .table-bordered th,
+#weeklyScheduleGrid .table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+#weeklyScheduleGrid .table-bordered thead th,
+#weeklyScheduleGrid .table-bordered thead td {
+  border-bottom-width: 2px;
+}
+
+#weeklyScheduleGrid .table-sm th,
+#weeklyScheduleGrid .table-sm td {
+  padding: 0.3rem;
+}
+
+#weeklyScheduleGrid .table-dark {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #454d55;
+}
+
+#weeklyScheduleGrid .table-dark th,
+#weeklyScheduleGrid .table-dark td,
+#weeklyScheduleGrid .table-dark thead th,
+#weeklyScheduleGrid .table-dark tbody + tbody {
+  border-color: #454d55;
+}
+
+#weeklyScheduleGrid .table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Styling for course blocks within weekly view cells */
+#weeklyScheduleGrid .table td > div {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  padding: 5px;
+  margin-bottom: 3px;
+  border-radius: 4px;
+  word-break: break-word; /* Ensures long text wraps */
+}
+
+#weeklyScheduleGrid .table td > div strong {
+  font-size: 0.85rem;
+}
+
+#weeklyScheduleGrid .table td > div small {
+  font-size: 0.65rem;
 }
