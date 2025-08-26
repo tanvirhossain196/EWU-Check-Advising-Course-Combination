@@ -1,0 +1,534 @@
+/* Custom Styles for Course Advising System */
+
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --success-color: #27ae60;
+  --warning-color: #f39c12;
+  --danger-color: #e74c3c;
+  --light-bg: #f8f9fa;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --dark-blue-gradient: linear-gradient(135deg, #1a2a3a, #2c3e50);
+  --selected-courses-header-bg: #007bff; /* A distinct blue for selected courses header */
+}
+
+body {
+  background-color: white;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  padding-top: 70px;
+  /* Space for fixed navbar */
+  min-height: 100vh; /* Ensure body takes full viewport height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar Styles */
+.custom-navbar {
+  background: linear-gradient(135deg, #0f1c2c, #1a2a3a);
+  box-shadow: var(--box-shadow);
+  padding: 8px 20px;
+}
+
+/* New: Container to control navbar content width */
+.custom-navbar .main-content-width {
+  max-width: 1320px; /* Matches Bootstrap's .container max-width for lg/xl */
+  margin: 0 auto; /* Center the content */
+  display: flex; /* Enable flexbox for alignment */
+  align-items: center; /* Vertically align items */
+  justify-content: space-between; /* Distribute items with space between */
+}
+
+.navbar-logo {
+  height: 65px; /* Increased height */
+  width: 80px; /* Increased width, wider than height */
+  margin-right: 15px;
+  object-fit: contain; /* Ensures the image scales correctly within the new dimensions */
+}
+
+.navbar-text {
+  color: white !important;
+  font-weight: bold;
+  /* Removed mx-auto to allow text to sit next to logo */
+  /* Added me-auto to push button to the right */
+}
+
+.main-content-padding {
+  padding-top: 90px; /* Adjusted padding to create more gap below the navbar */
+  flex-grow: 1; /* Allow main content to grow and fill space */
+}
+
+/* Card Styles */
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card-header {
+  border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  background-color: var(--light-bg) !important;
+}
+
+/* NEW: Course Group Card Styles */
+.course-group-card {
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.course-group-header {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  padding: 12px 20px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+}
+
+.course-sections-container {
+  padding: 10px;
+}
+
+/* Course Row Styles (NEW) */
+.course-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border: 1px solid #e9ecef;
+  background-color: white;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease; /* Added for smooth transitions */
+  position: relative;
+}
+
+.course-row:last-child {
+  margin-bottom: 0;
+}
+
+.course-row:hover {
+  background-color: rgba(220, 230, 240, 0.5);
+  border-color: var(--secondary-color);
+}
+
+.course-row.selected-row {
+  background-color: #e6ffe6;
+  border-color: var(--success-color);
+  box-shadow: 0 0 8px rgba(39, 174, 96, 0.4);
+  transform: scale(1.01);
+}
+
+.course-row input[type="checkbox"] {
+  margin-right: 15px;
+  transform: scale(1.3);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.course-info {
+  flex-grow: 1;
+}
+
+.course-info .section-name {
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.course-info .class-time {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
+.course-info .credit-hours-display {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Selected Courses & Analysis Panel Fixed Position */
+.sticky-sidebar {
+  position: sticky;
+  top: 90px; /* Aligns with the top padding of main-content-padding */
+  align-self: flex-start; /* Ensures it sticks to the top of its flex container */
+  z-index: 1000; /* Ensure it stays above other content if needed */
+}
+
+/* Selected Courses Styles (Remains mostly the same) */
+.card-header.bg-selected-courses {
+  background-color: var(--selected-courses-header-bg) !important;
+  color: white !important;
+}
+
+.selected-course-item {
+  background-color: white;
+  border: 1px solid var(--success-color);
+  border-radius: var(--border-radius);
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.selected-course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remove-course-btn {
+  background: none;
+  border: none;
+  color: var(--danger-color);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+}
+
+.remove-course-btn:hover {
+  color: #c0392b;
+}
+
+/* Analysis Results Styles */
+.analysis-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: var(--border-radius);
+  border-left: 4px solid;
+  /* Ensure text color is readable */
+  color: #333; /* Default readable text color */
+}
+
+.analysis-excellent {
+  background-color: #d4edda; /* Light Green */
+  border-left-color: var(--success-color); /* Green */
+  color: #155724; /* Dark Green for text */
+}
+
+.analysis-good {
+  background-color: #d1ecf1; /* Light Cyan */
+  border-left-color: #17a2b8; /* Cyan */
+  color: #0c5460; /* Dark Cyan for text */
+}
+
+.analysis-average {
+  background-color: #fff3cd; /* Light Yellow */
+  border-left-color: var(--warning-color); /* Orange/Yellow */
+  color: #856404; /* Dark Brown/Yellow for text */
+}
+
+.analysis-poor {
+  background-color: #f8d7da; /* Light Red */
+  border-left-color: var(--danger-color); /* Red */
+  color: #721c24; /* Dark Red for text */
+}
+
+.conflict-warning {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+}
+
+.conflict-item {
+  background-color: white;
+  border: 1px solid var(--danger-color);
+  border-radius: var(--border-radius);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* Notification Div */
+#notificationContainer {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1050;
+  max-width: 350px;
+}
+
+.notification-div {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: var(--border-radius);
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added shadow for professionalism */
+}
+
+.notification-div.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.notification-div.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.notification-div.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+  /* For tablets and smaller laptops */
+  .main-content-padding .row {
+    flex-direction: column; /* Stack columns vertically */
+  }
+
+  .col-lg-8,
+  .col-lg-4 {
+    width: 100%; /* Take full width */
+  }
+
+  .col-lg-4.mt-4.mt-lg-0 {
+    margin-top: 1.5rem !important; /* Add top margin when stacked */
+  }
+
+  /* Disable sticky sidebar on smaller screens */
+  .sticky-sidebar {
+    position: static;
+    top: auto;
+    align-self: auto;
+  }
+
+  .card-header .row {
+    flex-direction: column; /* Stack search/filter inputs */
+    align-items: stretch;
+  }
+
+  .card-header .col-md-5,
+  .card-header .col-md-3,
+  .card-header .col-md-2 {
+    width: 100%;
+    margin-bottom: 0.5rem !important; /* Add space between stacked inputs */
+  }
+}
+
+@media (max-width: 767.98px) {
+  /* For mobile devices */
+  .course-row {
+    flex-wrap: wrap;
+  }
+
+  .course-info {
+    width: calc(100% - 40px);
+  }
+
+  .custom-navbar .main-content-width {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .custom-navbar .navbar-text {
+    margin-right: 0 !important; /* Override me-auto on small screens */
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 1.2rem; /* Adjust font size for smaller screens */
+  }
+
+  .custom-navbar .navbar-brand {
+    margin-right: 0;
+  }
+
+  .custom-navbar .rounded-button {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  body {
+    padding-top: 100px; /* Adjust padding for taller navbar on small screens */
+  }
+}
+
+@media (max-width: 575.98px) {
+  /* Extra small devices */
+  .container-fluid {
+    padding: 0;
+  }
+
+  header .container {
+    padding: 0 15px;
+  }
+
+  .card {
+    margin: 0 10px;
+  }
+
+  .course-row {
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+
+  .navbar-logo {
+    height: 40px;
+    width: 55px;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px); /* Reduced translateY for smoother effect */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02); /* Reduced scale for subtlety */
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tooltip Styles */
+.tooltip-custom {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip-custom:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+/* Credit Hours Display */
+.credit-hours {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* Exam Schedule Indicator */
+.exam-indicator {
+  background-color: #6f42c1;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  margin-left: 5px;
+}
+
+/* Rounded Buttons */
+.rounded-button {
+  border-radius: 20px !important;
+  padding: 10px 20px !important;
+  transition: all 0.3s ease;
+}
+
+.rounded-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Show My Courses Modal Styling */
+#myCoursesList .course-item {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: var(--border-radius);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+#myCoursesList .course-item strong {
+  color: var(--primary-color);
+}
+
+#creditSuggestion {
+  font-weight: bold;
+  text-align: center;
+}
+
+#creditSuggestion.poor {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+#creditSuggestion.average {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+#creditSuggestion.good {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+#creditSuggestion.best {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}

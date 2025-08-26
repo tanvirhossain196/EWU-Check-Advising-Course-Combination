@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fall-25 Course Advising System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+            <div class="container-fluid main-content-width">
+                <a class="navbar-brand" href="#">
+                    <img src="ewulogo.jpg" alt="EWU Logo" class="navbar-logo">
+                </a>
+                <span class="navbar-text text-white h3 mb-0 me-auto">Fall-25 Demo  Course Advising</span>
+                <button class="btn btn-light rounded-button" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+                    <i class="fas fa-plus me-2"></i>Add New Course
+                </button>
+            </div>
+        </nav>
+
+        <!-- Header (Moved content to Navbar, keeping for structure if needed) -->
+        <header class="bg-primary text-white py-4 mb-4 d-none">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Fall-25 Course Advising System</h1>
+                        <p class="mb-0 mt-2">Select your courses wisely to avoid time conflicts</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+                            <i class="fas fa-plus me-2"></i>Add New Course
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container main-content-padding">
+            <div class="row main-content-row">
+                <!-- Course Selection Panel -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h3 class="card-title mb-0"><i class="fas fa-list me-2"></i>Available Courses</h3>
+                            <div class="row mt-3 align-items-center">
+                                <div class="col-md-5 mb-2 mb-md-0 d-none">
+                                    <!-- Search input field removed as per request -->
+                                    <input type="text" class="form-control" id="courseSearch"
+                                        placeholder="Search courses..." onkeyup="debouncedFilterCourses()">
+                                </div>
+                                <div class="col-md-3 mb-2 mb-md-0">
+                                    <select class="form-select" id="facultyFilter" onchange="filterCourses()">
+                                        <option value="">All Faculties</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-2 mb-md-0">
+                                    <select class="form-select" id="creditFilter" onchange="filterCourses()">
+                                        <option value="">All Credits</option>
+                                        <option value="3">3 Credits</option>
+                                        <option value="4">4 Credits</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-select" id="courseCodeNav" onchange="scrollToCourseCode()">
+                                        <option value="">Jump to Course</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="courseList" class="row">
+                                <!-- Courses will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selected Courses & Analysis Panel -->
+                <div class="col-lg-4 mt-4 mt-lg-0 sticky-sidebar">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-selected-courses text-white">
+                            <h4 class="card-title mb-0"><i class="fas fa-check-circle me-2"></i>Selected Courses</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="selectedCourses">
+                                <p class="text-muted text-center">No courses selected yet</p>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-primary w-100 rounded-button" onclick="analyzeCourses()">
+                                    <i class="fas fa-analytics me-2"></i>Analyze Selection
+                                </button>
+                                <button class="btn btn-outline-secondary w-100 mt-2 rounded-button"
+                                    onclick="clearSelection()">
+                                    <i class="fas fa-trash me-2"></i>Clear All
+                                </button>
+                                <button class="btn btn-outline-info w-100 mt-2 rounded-button"
+                                    onclick="exportSelectedCourses()">
+                                    <i class="fas fa-download me-2"></i>Export Selection
+                                </button>
+                                <button class="btn btn-outline-primary w-100 mt-2 rounded-button" data-bs-toggle="modal"
+                                    data-bs-target="#weeklyViewModal">
+                                    <i class="fas fa-calendar-week me-2"></i>Weekly View
+                                </button>
+                                <button class="btn btn-outline-secondary w-100 mt-2 rounded-button"
+                                    onclick="printSchedule()">
+                                    <i class="fas fa-print me-2"></i>Print Schedule
+                                </button>
+                                <button class="btn btn-info w-100 mt-2 rounded-button" onclick="showMyCourses()">
+                                    <i class="fas fa-eye me-2"></i>Show My Courses
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Results -->
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h4 class="card-title mb-0" style="color: #2780F5;"><i class="fas fa-chart-line me-2" style="color:#2780F5;"></i>Analysis Results</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="analysisResults">
+                                <p class="text-muted text-center">Select courses to see analysis</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Course Modal -->
+    <div class="modal fade" id="addCourseModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Add New Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCourseForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Course Code</label>
+                                    <input type="text" class="form-control" id="courseCode" placeholder="e.g., CSE101"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Section</label>
+                                    <input type="number" class="form-control" id="section" placeholder="e.g., 1"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Faculty</label>
+                                    <input type="text" class="form-control" id="faculty" placeholder="e.g., NISHAT"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Credits</label>
+                                    <input type="number" class="form-control" id="credits" placeholder="e.g., 3 or 4"
+                                        min="1" max="6" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Days</label>
+                                    <input type="text" class="form-control" id="days" placeholder="e.g., TR or MW"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Room</label>
+                                    <input type="text" class="form-control" id="room" placeholder="e.g., AB2-502"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" id="startTime" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">End Time</label>
+                                    <input type="time" class="form-control" id="endTime" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasLab">
+                            <label class="form-check-label" for="hasLab">
+                                This course has a lab component
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-button"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary rounded-button" onclick="addNewCourse()">Add
+                        Course</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly View Modal -->
+    <div class="modal fade" id="weeklyViewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-week me-2"></i>Weekly Schedule View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="weeklyScheduleGrid" class="table-responsive">
+                        <!-- Weekly schedule will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Show My Courses Modal -->
+    <div class="modal fade" id="showMyCoursesModal" tabindex="-1" aria-labelledby="showMyCoursesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showMyCoursesModalLabel">My Selected Courses</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="myCoursesList">
+                        <!-- Selected courses will be displayed here -->
+                    </div>
+                    <div id="creditSuggestion" class="mt-3 p-3 rounded">
+                        <!-- Credit suggestion will be displayed here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-button"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jsPDF and html2canvas for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
