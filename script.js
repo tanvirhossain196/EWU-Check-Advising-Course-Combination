@@ -147,9 +147,9 @@ let coursesData = [
       },
       {
         days: "S",
-        startTime: "10:10",
-        endTime: "11:40",
-        room: "AB3-402",
+        startTime: "08:30",
+        endTime: "10:00",
+        room: "AB2-402",
         isLab: false,
       },
       {
@@ -169,10 +169,10 @@ let coursesData = [
     faculty: "NTN",
     schedules: [
       {
-        days: "MW",
-        startTime: "08:30",
-        endTime: "10:00",
-        room: "AB1-402",
+        days: "SR",
+        startTime: "04:50",
+        endTime: "06:20",
+        room: "432",
         isLab: false,
       },
     ],
